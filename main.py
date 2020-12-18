@@ -1,4 +1,5 @@
 MAXDATA = 1200
+globalIDX = 0
 radio.set_transmit_power(7)
 radio.set_group(88)
 
@@ -47,11 +48,11 @@ dt = getDataAtPos(0)
 st = getStampAtPos(0)
 print("Timestamp="+str(st)+" data="+str(dt))
 
-basic.pause(1050)
-putDataAtPos(1, input.running_time()/1000,77)
-dt = getDataAtPos(1)
-st = getStampAtPos(1)
-print("Timestamp="+str(st)+" data="+str(dt))
+# basic.pause(1050)
+# putDataAtPos(1, input.running_time()/1000,77)
+# dt = getDataAtPos(1)
+# st = getStampAtPos(1)
+# print("Timestamp="+str(st)+" data="+str(dt))
 
 
 def on_button_pressed_a():
@@ -68,14 +69,16 @@ def on_button_pressed_a():
         buff[3]=tstamps[4*idx+2]
         buff[4]=tstamps[4*idx+3]
         radio.send_buffer(buff)
-        print(str(stmp)+", "+str(dat))
+        #print(str(stmp)+", "+str(dat))
+        idx += 1
         stmp = getStampAtPos(idx)
+        basic.pause(50)
     
 
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def on_received_buffer(rBuffer):
-    dat = rBuffer[0]
+    dat = Math.map(rBuffer[0],0,255,-100,500)/10
     tmstmp = rBuffer[1]+\
                 rBuffer[2]*256+\
                 rBuffer[3]*65536+\
@@ -83,3 +86,21 @@ def on_received_buffer(rBuffer):
     print(str(tmstmp)+", "+str(dat))
 
 radio.on_received_buffer(on_received_buffer)
+
+def getNewData():
+    global globalIDX
+    dat = input.temperature()
+    dat = Math.map(dat*10, -100,500,0,255)
+    tst = input.running_time()/1000
+    putDataAtPos(globalIDX,tst,dat)
+
+def onSet_interval_interval():
+    global globalIDX
+    led.plot(2, 2)
+    #print(str(globalIDX))
+    getNewData()
+    globalIDX += 1
+    basic.pause(100)
+    led.unplot(2, 2)    #flash a led
+
+control.set_interval(onSet_interval_interval, 1000, control.IntervalMode.INTERVAL)

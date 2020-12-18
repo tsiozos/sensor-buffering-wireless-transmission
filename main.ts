@@ -1,5 +1,6 @@
 let i: number;
 let MAXDATA = 1200
+let globalIDX = 0
 radio.setTransmitPower(7)
 radio.setGroup(88)
 let sensordata = control.createBuffer(MAXDATA)
@@ -47,11 +48,11 @@ putDataAtPos(0, input.runningTime() / 1000, 66)
 let dt = getDataAtPos(0)
 let st = getStampAtPos(0)
 console.log("Timestamp=" + ("" + st) + " data=" + ("" + dt))
-basic.pause(1050)
-putDataAtPos(1, input.runningTime() / 1000, 77)
-dt = getDataAtPos(1)
-st = getStampAtPos(1)
-console.log("Timestamp=" + ("" + st) + " data=" + ("" + dt))
+//  basic.pause(1050)
+//  putDataAtPos(1, input.running_time()/1000,77)
+//  dt = getDataAtPos(1)
+//  st = getStampAtPos(1)
+//  print("Timestamp="+str(st)+" data="+str(dt))
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
     let dat: any;
     
@@ -66,12 +67,32 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
         buff[3] = tstamps[4 * idx + 2]
         buff[4] = tstamps[4 * idx + 3]
         radio.sendBuffer(buff)
-        console.log("" + stmp + ", " + ("" + dat))
+        // print(str(stmp)+", "+str(dat))
+        idx += 1
         stmp = getStampAtPos(idx)
+        basic.pause(50)
     }
 })
 radio.onReceivedBuffer(function on_received_buffer(rBuffer: Buffer) {
-    let dat = rBuffer[0]
+    let dat = Math.map(rBuffer[0], 0, 255, -100, 500) / 10
     let tmstmp = rBuffer[1] + rBuffer[2] * 256 + rBuffer[3] * 65536 + rBuffer[4] * 16777216
     console.log("" + tmstmp + ", " + ("" + dat))
 })
+function getNewData() {
+    
+    let dat = input.temperature()
+    dat = Math.map(dat * 10, -100, 500, 0, 255)
+    let tst = input.runningTime() / 1000
+    putDataAtPos(globalIDX, tst, dat)
+}
+
+// flash a led
+control.setInterval(function onSet_interval_interval() {
+    
+    led.plot(2, 2)
+    // print(str(globalIDX))
+    getNewData()
+    globalIDX += 1
+    basic.pause(100)
+    led.unplot(2, 2)
+}, 1000, control.IntervalMode.Interval)

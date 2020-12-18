@@ -46,8 +46,8 @@ basic.pause(1050)
 putDataAtPos(0, input.running_time()/1000,66)
 dt = getDataAtPos(0)
 st = getStampAtPos(0)
-print("Timestamp="+str(st)+" data="+str(dt))
 
+#print("Timestamp="+str(st)+" data="+str(dt))
 # basic.pause(1050)
 # putDataAtPos(1, input.running_time()/1000,77)
 # dt = getDataAtPos(1)
@@ -90,16 +90,18 @@ radio.on_received_buffer(on_received_buffer)
 def getNewData():
     global globalIDX
     dat = input.temperature()
-    dat = Math.map(dat*10, -100,500,0,255)
+    dat = Math.floor(Math.map(dat*10, -100,500,0,255))  #convert to byte from -10.0 to 50.0 C
     tst = input.running_time()/1000
-    putDataAtPos(globalIDX,tst,dat)
+    olddat = getDataAtPos(globalIDX)
+    if olddat != dat:   # write new data only if they change
+        globalIDX += 1  #next empty position
+        putDataAtPos(globalIDX,tst,dat) #write data
 
 def onSet_interval_interval():
     global globalIDX
     led.plot(2, 2)
     #print(str(globalIDX))
     getNewData()
-    globalIDX += 1
     basic.pause(100)
     led.unplot(2, 2)    #flash a led
 

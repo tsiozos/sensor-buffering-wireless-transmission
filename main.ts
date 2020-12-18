@@ -47,7 +47,7 @@ basic.pause(1050)
 putDataAtPos(0, input.runningTime() / 1000, 66)
 let dt = getDataAtPos(0)
 let st = getStampAtPos(0)
-console.log("Timestamp=" + ("" + st) + " data=" + ("" + dt))
+// print("Timestamp="+str(st)+" data="+str(dt))
 //  basic.pause(1050)
 //  putDataAtPos(1, input.running_time()/1000,77)
 //  dt = getDataAtPos(1)
@@ -81,18 +81,26 @@ radio.onReceivedBuffer(function on_received_buffer(rBuffer: Buffer) {
 function getNewData() {
     
     let dat = input.temperature()
-    dat = Math.map(dat * 10, -100, 500, 0, 255)
+    dat = Math.floor(Math.map(dat * 10, -100, 500, 0, 255))
+    // convert to byte from -10.0 to 50.0 C
     let tst = input.runningTime() / 1000
-    putDataAtPos(globalIDX, tst, dat)
+    let olddat = getDataAtPos(globalIDX)
+    if (olddat != dat) {
+        //  write new data only if they change
+        globalIDX += 1
+        // next empty position
+        putDataAtPos(globalIDX, tst, dat)
+    }
+    
 }
 
+// write data
 // flash a led
 control.setInterval(function onSet_interval_interval() {
     
     led.plot(2, 2)
     // print(str(globalIDX))
     getNewData()
-    globalIDX += 1
     basic.pause(100)
     led.unplot(2, 2)
 }, 1000, control.IntervalMode.Interval)

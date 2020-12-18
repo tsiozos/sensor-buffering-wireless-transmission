@@ -42,10 +42,10 @@ def putDataAtPos(pos, tstamp, data):
                 tstamps[tpos+3]*16777216
     data = sensordata[pos]
 
-basic.pause(1050)
-putDataAtPos(0, input.running_time()/1000,66)
-dt = getDataAtPos(0)
-st = getStampAtPos(0)
+# basic.pause(1050)
+# putDataAtPos(0, input.running_time()/1000,66)
+# dt = getDataAtPos(0)
+# st = getStampAtPos(0)
 
 #print("Timestamp="+str(st)+" data="+str(dt))
 # basic.pause(1050)

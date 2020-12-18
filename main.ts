@@ -43,10 +43,10 @@ function putDataAtPos(pos: number, tstamp: number, data: number) {
     data = sensordata[pos]
 }
 
-basic.pause(1050)
-putDataAtPos(0, input.runningTime() / 1000, 66)
-let dt = getDataAtPos(0)
-let st = getStampAtPos(0)
+//  basic.pause(1050)
+//  putDataAtPos(0, input.running_time()/1000,66)
+//  dt = getDataAtPos(0)
+//  st = getStampAtPos(0)
 // print("Timestamp="+str(st)+" data="+str(dt))
 //  basic.pause(1050)
 //  putDataAtPos(1, input.running_time()/1000,77)

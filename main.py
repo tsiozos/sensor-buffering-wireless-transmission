@@ -105,4 +105,4 @@ def onSet_interval_interval():
     basic.pause(100)
     led.unplot(2, 2)    #flash a led
 
-control.set_interval(onSet_interval_interval, 1000, control.IntervalMode.INTERVAL)
+control.set_interval(onSet_interval_interval, 60000, control.IntervalMode.INTERVAL)

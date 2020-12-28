@@ -103,4 +103,4 @@ control.setInterval(function onSet_interval_interval() {
     getNewData()
     basic.pause(100)
     led.unplot(2, 2)
-}, 1000, control.IntervalMode.Interval)
+}, 60000, control.IntervalMode.Interval)

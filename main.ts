@@ -54,24 +54,23 @@ function putDataAtPos(pos: number, tstamp: number, data: number) {
 //  st = getStampAtPos(1)
 //  print("Timestamp="+str(st)+" data="+str(dt))
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
-    let dat: any;
     
-    let idx = 0
-    let stmp = getStampAtPos(idx)
+    let stmp = getStampAtPos(0)
     let buff = control.createBuffer(5)
-    while (stmp != 0) {
-        dat = getDataAtPos(idx)
-        buff[0] = sensordata[idx]
-        buff[1] = tstamps[4 * idx]
-        buff[2] = tstamps[4 * idx + 1]
-        buff[3] = tstamps[4 * idx + 2]
-        buff[4] = tstamps[4 * idx + 3]
+    for (let i = 0; i < globalIDX; i++) {
+        buff[0] = sensordata[i]
+        buff[1] = tstamps[4 * i]
+        buff[2] = tstamps[4 * i + 1]
+        buff[3] = tstamps[4 * i + 2]
+        buff[4] = tstamps[4 * i + 3]
         radio.sendBuffer(buff)
-        // print(str(stmp)+", "+str(dat))
-        idx += 1
-        stmp = getStampAtPos(idx)
+        console.log("" + stmp + ", " + ("" + buff[0]))
+        stmp = getStampAtPos(i)
         basic.pause(50)
     }
+})
+input.onButtonPressed(Button.B, function on_button_pressed_b() {
+    basic.showNumber(input.temperature())
 })
 radio.onReceivedBuffer(function on_received_buffer(rBuffer: Buffer) {
     let dat = Math.map(rBuffer[0], 0, 255, -100, 500) / 10
@@ -103,4 +102,4 @@ control.setInterval(function onSet_interval_interval() {
     getNewData()
     basic.pause(100)
     led.unplot(2, 2)
-}, 60000, control.IntervalMode.Interval)
+}, 10000, control.IntervalMode.Interval)

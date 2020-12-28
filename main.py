@@ -56,26 +56,28 @@ def putDataAtPos(pos, tstamp, data):
 
 
 def on_button_pressed_a():
-    global sensordata, tstamps
+    global sensordata, tstamps, globalIDX
 
-    idx = 0
-    stmp = getStampAtPos(idx)
+    stmp = getStampAtPos(0)
     buff = bytearray(5)
-    while stmp != 0:
-        dat = getDataAtPos(idx)
-        buff[0]=sensordata[idx]
-        buff[1]=tstamps[4*idx]
-        buff[2]=tstamps[4*idx+1]
-        buff[3]=tstamps[4*idx+2]
-        buff[4]=tstamps[4*idx+3]
+    for i in range(globalIDX):
+        buff[0]=sensordata[i]
+        buff[1]=tstamps[4*i]
+        buff[2]=tstamps[4*i+1]
+        buff[3]=tstamps[4*i+2]
+        buff[4]=tstamps[4*i+3]
         radio.send_buffer(buff)
-        #print(str(stmp)+", "+str(dat))
-        idx += 1
-        stmp = getStampAtPos(idx)
+        print(str(stmp)+", "+str(buff[0]))
+        stmp = getStampAtPos(i)
         basic.pause(50)
-    
-
 input.on_button_pressed(Button.A, on_button_pressed_a)
+
+def on_button_pressed_b():
+    basic.show_number(input.temperature())
+
+input.on_button_pressed(Button.B, on_button_pressed_b)
+
+
 
 def on_received_buffer(rBuffer):
     dat = Math.map(rBuffer[0],0,255,-100,500)/10
@@ -105,4 +107,4 @@ def onSet_interval_interval():
     basic.pause(100)
     led.unplot(2, 2)    #flash a led
 
-control.set_interval(onSet_interval_interval, 60000, control.IntervalMode.INTERVAL)
+control.set_interval(onSet_interval_interval, 10000, control.IntervalMode.INTERVAL)

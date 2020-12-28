@@ -3,6 +3,8 @@ let MAXDATA = 1200
 let globalIDX = 0
 radio.setTransmitPower(7)
 radio.setGroup(88)
+input.temperature()
+// prepare sensor
 let sensordata = control.createBuffer(MAXDATA)
 // SENSOR DATA - 8 bit per reading
 for (i = 0; i < sensordata.length; i++) {

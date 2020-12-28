@@ -2,6 +2,7 @@ MAXDATA = 1200
 globalIDX = 0
 radio.set_transmit_power(7)
 radio.set_group(88)
+input.temperature() #prepare sensor
 
 sensordata = bytearray(MAXDATA)  #SENSOR DATA - 8 bit per reading
 for i in range(sensordata.length):

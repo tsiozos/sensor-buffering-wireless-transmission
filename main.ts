@@ -27,6 +27,22 @@ function getStampAtPos(pos: number) {
     return tmstmp
 }
 
+function strrepl(s: number, old: string, new_: string): string {
+    let ss = "" + s
+    let so = "" + old
+    let sn = "" + new_
+    let snew = ""
+    for (let i = 0; i < ss.length; i++) {
+        if (ss.charAt(i) == so) {
+            snew = snew + sn
+        } else {
+            snew = snew + ss.charAt(i)
+        }
+        
+    }
+    return snew
+}
+
 function putDataAtPos(pos: number, tstamp: number, data: number) {
     
     let tpos = 4 * pos
@@ -55,8 +71,9 @@ function putDataAtPos(pos: number, tstamp: number, data: number) {
 //  dt = getDataAtPos(1)
 //  st = getStampAtPos(1)
 //  print("Timestamp="+str(st)+" data="+str(dt))
-input.onButtonPressed(Button.A, function on_button_pressed_a() {
+function on_button_pressed_a() {
     
+    console.log("-------------------")
     let stmp = getStampAtPos(0)
     let buff = control.createBuffer(5)
     for (let i = 0; i < globalIDX; i++) {
@@ -70,14 +87,17 @@ input.onButtonPressed(Button.A, function on_button_pressed_a() {
         stmp = getStampAtPos(i)
         basic.pause(50)
     }
-})
+}
+
+input.onButtonPressed(Button.A, on_button_pressed_a)
 input.onButtonPressed(Button.B, function on_button_pressed_b() {
     basic.showNumber(input.temperature())
 })
 radio.onReceivedBuffer(function on_received_buffer(rBuffer: Buffer) {
     let dat = Math.map(rBuffer[0], 0, 255, -100, 500) / 10
     let tmstmp = rBuffer[1] + rBuffer[2] * 256 + rBuffer[3] * 65536 + rBuffer[4] * 16777216
-    console.log("" + tmstmp + ", " + ("" + dat))
+    let sdat = strrepl(dat, ".", ",")
+    console.log("" + tmstmp + "; " + sdat)
 })
 function getNewData() {
     
@@ -104,4 +124,8 @@ control.setInterval(function onSet_interval_interval() {
     getNewData()
     basic.pause(100)
     led.unplot(2, 2)
-}, 10000, control.IntervalMode.Interval)
+}, 60000, control.IntervalMode.Interval)
+control.setInterval(function onSet_interval_interval2() {
+    // every 15 minutes send the data
+    on_button_pressed_a()
+}, 60000 * 15, control.IntervalMode.Interval)

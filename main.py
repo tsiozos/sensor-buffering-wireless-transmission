@@ -24,6 +24,17 @@ def getStampAtPos(pos):
                 tstamps[tpos+3]*16777216
     return tmstmp
 
+def strrepl(s,old,new):
+    ss = str(s)
+    so = str(old)
+    sn = str(new)
+    snew = ""
+    for i in range(len(ss)):
+        if ss.char_at(i)==so:
+            snew=snew+sn
+        else:
+            snew=snew+ss.char_at(i)
+    return snew    
 
 def putDataAtPos(pos, tstamp, data):
     global sensordata, tstamps
@@ -58,7 +69,7 @@ def putDataAtPos(pos, tstamp, data):
 
 def on_button_pressed_a():
     global sensordata, tstamps, globalIDX
-
+    print("-------------------")
     stmp = getStampAtPos(0)
     buff = bytearray(5)
     for i in range(globalIDX):
@@ -86,7 +97,8 @@ def on_received_buffer(rBuffer):
                 rBuffer[2]*256+\
                 rBuffer[3]*65536+\
                 rBuffer[4]*16777216
-    print(str(tmstmp)+", "+str(dat))
+    sdat = strrepl(dat,".",",")
+    print(str(tmstmp)+"; "+sdat)
 
 radio.on_received_buffer(on_received_buffer)
 
@@ -108,4 +120,10 @@ def onSet_interval_interval():
     basic.pause(100)
     led.unplot(2, 2)    #flash a led
 
-control.set_interval(onSet_interval_interval, 10000, control.IntervalMode.INTERVAL)
+control.set_interval(onSet_interval_interval, 60000, control.IntervalMode.INTERVAL)
+
+
+def onSet_interval_interval2():     #every 15 minutes send the data
+    on_button_pressed_a()
+
+control.set_interval(onSet_interval_interval2, 60000*15, control.IntervalMode.INTERVAL) #every 15 minutes

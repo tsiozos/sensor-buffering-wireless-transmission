@@ -97,7 +97,7 @@ radio.onReceivedBuffer(function on_received_buffer(rBuffer: Buffer) {
     let dat = Math.map(rBuffer[0], 0, 255, -100, 500) / 10
     let tmstmp = rBuffer[1] + rBuffer[2] * 256 + rBuffer[3] * 65536 + rBuffer[4] * 16777216
     let sdat = strrepl(dat, ".", ",")
-    console.log("" + tmstmp + "; " + sdat)
+    console.log("" + RadioPacketProperty.SerialNumber + ":" + ("" + tmstmp) + "; " + sdat)
 })
 function getNewData() {
     

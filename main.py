@@ -98,7 +98,7 @@ def on_received_buffer(rBuffer):
                 rBuffer[3]*65536+\
                 rBuffer[4]*16777216
     sdat = strrepl(dat,".",",")
-    print(str(tmstmp)+"; "+sdat)
+    print(str(RadioPacketProperty.SERIAL_NUMBER)+':'+str(tmstmp)+"; "+sdat)
 
 radio.on_received_buffer(on_received_buffer)
 
